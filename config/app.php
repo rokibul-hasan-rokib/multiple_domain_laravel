@@ -123,4 +123,10 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'domains' => [
+    'domain1' => env('DOMAIN1', 'http://domain1.test'),
+    'domain2' => env('DOMAIN2', 'http://domain2.test'),
+    'domain3' => env('DOMAIN3', 'http://domain3.test'),
+],
+
 ];

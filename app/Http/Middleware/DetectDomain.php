@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
 class DetectDomain
@@ -17,8 +18,24 @@ class DetectDomain
     {
         $host = $request->getHost();
 
-        // Store current domain name in config or session
+        // Set the domain in config for later use
         config(['app.current_domain' => $host]);
+
+        // Share domain info globally to all views (optional)
+        View::share('current_domain', $host);
+
+        if ($host == parse_url(config('app.domains.domain1'), PHP_URL_HOST)) {
+            // You can bind services or configs here
+            config(['app.theme' => 'theme1']);
+        }
+
+        if ($host == parse_url(config('app.domains.domain2'), PHP_URL_HOST)) {
+            config(['app.theme' => 'theme2']);
+        }
+
+        if ($host == parse_url(config('app.domains.domain3'), PHP_URL_HOST)) {
+            config(['app.theme' => 'theme3']);
+        }
 
         return $next($request);
     }

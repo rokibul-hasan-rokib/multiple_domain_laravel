@@ -12,8 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [
-            DetectDomain::class,
+        $middleware->alias([
+            'detect.domain' => DetectDomain::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

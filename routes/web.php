@@ -32,7 +32,7 @@ Route::middleware(['detect.domain'])->group(function () {
         });
     });
 
-    // Domain 2 Routes
+
     Route::domain(parse_url(config('app.domains.domain2'), PHP_URL_HOST))->group(function () {
         Route::get('/', function () {
             return view('domain2');

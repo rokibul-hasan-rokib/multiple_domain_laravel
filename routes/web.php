@@ -54,4 +54,6 @@ Route::middleware(['detect.domain'])->group(function () {
         });
     });
 
+    
+
 });

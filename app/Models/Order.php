@@ -61,4 +61,12 @@ class Order extends Model
             'payment_status' => $payment_status,
         ]);
     }
+
+    final public function isFirstPurchase(int $company_id): bool
+    {
+        return self::query()->where('company_id', $company_id)
+            ->where('status', self::STATUS_COMPLETED)
+            ->where('payment_status', self::PAYMENT_STATUS_PAID)
+            ->doesntExist();
+    }
 }

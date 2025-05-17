@@ -44,9 +44,12 @@ class OrderDetail extends Model
     final public function prepareData(Package $package, Order $order): array
     {
         return [
-            'name'     => $package->name,
+            'order_id' => $order->id,
+            'name' => $package->name,
+            'price' => $package->price,
+            'currency' => Package::CURRENCY,
             'validity' => $package->validity,
-            'price'    => $package->price,
+            'feature' => $package->feature,
         ];
     }
 }

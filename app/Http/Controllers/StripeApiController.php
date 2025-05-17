@@ -47,6 +47,34 @@ class StripeApiController extends Controller
         }
     }
 
+    final public function paygateCallback(Request $request)
+    {
+        Log::info('PAYGATE_CALLBACK_RECEIVED', ['data' => $request->all()]);
+        try {
+            DB::beginTransaction();
+            $response = $request->all();
+            $transaction = (new PaymentTransaction())->getPendingTransaction('transaction_id', $response['address_in']);
+            if (!$transaction) {
+                Log::error('PAYGATE_CALLBACK_API_ERROR', ['message' => 'Payment transaction not found', 'tran_id' => $response['address_in'], 'request' => $request->all()]);
+                return response()->json(['message' => 'Payment transaction not found'], 404);
+            }
+            $transaction->update([
+                'response' => json_encode($response),
+            ]);
+
+            (new PaymentTransaction())->updateSuccess($request, $transaction);
+            (new Order())->updateStatus($transaction->order, Order::STATUS_COMPLETED, Order::PAYMENT_STATUS_PAID);
+            (new CompanyPackage())->storeCompanyPackage($transaction->order);
+
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Log::error('ERROR_WHILE_UPDATING_PAYMENT_ATTEMPT', ['message' => $e->getMessage(), 'tran_id' => $response['address_in'], 'data' => $request->all()]);
+            return response()->json(['message' => 'Error while updating payment attempt'], 500);
+        }
+    }
+
+
 
 
 

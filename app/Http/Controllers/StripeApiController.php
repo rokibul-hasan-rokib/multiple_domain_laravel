@@ -31,5 +31,23 @@ class StripeApiController extends Controller
         }
     }
 
+    final public function payGate(Order $order)
+    {
+        try {
+            $redirect_url = (new PayGatePaymentManager())->getPayGatePaymentData($order);
+            return response()->json([
+                'message' => 'Redirect to PayGate',
+                'url'     => $redirect_url,
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            dd($e->getMessage(), $e->getLine(), $e->getFile());
+            Log::error('Error while creating checkout', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Error while creating checkout'], 500);
+        }
+    }
+
+
+
 
 }
